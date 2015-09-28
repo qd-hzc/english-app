@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/service.js"></script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+		</style>
+		<script>
+			mui.init();
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title">错题本</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-card">
+				<ul class="mui-table-view" id="list">
+					<li class="mui-table-view-cell mui-media">
+						<div class="mui-media-body" style="text-align: center;">
+							<p class='mui-ellipsis' style="">没有数据</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script type="text/html" id="template-chapter-id">
+			<li class="mui-table-view-cell mui-media">
+				<a data-href="review-resolution.html" data-section-id="{sectionId}" data-type="{type}" style="height: 60px;padding-top: 20px;">
+					<span class="mui-pull-right"><span style="color: gray;font-size: 14px;">{count}道</span><span class="mui-icon mui-icon-forward "></span></span>
+					<div class="mui-media-body">
+						<p class='mui-ellipsis' style="">{name}</p>
+					</div>
+				</a>
+			</li>
+		</script>
+		<script type="text/javascript">
+			 //
+			function sectionATapEvent() {
+				mui('#list').on('tap', 'a', function() {
+					var sectionId = this.getAttribute('data-section-id');
+					var href = this.getAttribute('data-href');
+					var type = this.getAttribute("data-type");
+					mui.openWindow({
+						id: 'bar-' + sectionId,
+						url: href,
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							sectionId: sectionId,
+							type: type
+						}
+					})
+				});
+			}
+
+			function updateTitle() {
+				var self = plus.webview.currentWebview();
+				var barTitle = self.barTitle;
+				if (barTitle) {
+					var titleDom = document.getElementById('title');
+					titleDom.innerHTML = barTitle;
+				}
+			}
+
+			function initDom() {
+				var chapterId = window.chapterId;
+				var type = window.type;
+				var scriptCourse = document.getElementById('template-chapter-id');
+				var template = scriptCourse.innerHTML;
+				var ct = document.getElementById('list');
+				ct.innerHTML = '<li class="mui-table-view-cell mui-media">' +
+					'<div class="mui-media-body" style="text-align: center;">' +
+					'<p class="mui-ellipsis" style="">没有数据</p>' +
+					'</div>' +
+					'</li>';
+				queryChapterCount(chapterId, type, function(rows) {
+					if (rows.length < 1) {
+						return;
+					}
+					ct.innerHTML = "";
+					var htmlStr = '';
+					for (var i = 0; i < rows.length; i++) {
+						var row = rows[i];
+						row.sectionId = row.code;
+						row.type = type;
+						htmlStr += render(template, row);
+					}
+					ct.innerHTML = htmlStr;
+				});
+			}
+			mui.init();
+			mui.plusReady(function() {
+				updateTitle();
+				var self = plus.webview.currentWebview();
+				window.chapterId = self.chapterId;
+				window.type = self.type;
+				initDom();
+				sectionATapEvent();
+			});
+			var old_back = mui.back;
+			mui.back = function() {
+				var self = plus.webview.currentWebview();
+				self.opener().evalJS('initDom();');
+				//执行mui封装好的窗口关闭逻辑；
+				old_back();
+			}
+		</script>
+
+	</body>
+
+</html>

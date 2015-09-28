@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/service.js"></script>
+		<script src="../js/des.js"></script>
+		<script src="../js/routes.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			.mui-input-row {
+				padding-top: 9px !important;
+				height: 50px !important;
+			}
+			.mui-input-row:after {
+				right: 15px !important;
+			}
+		</style>
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				window.chapterId = self.chapterId;
+				window.sectionId = self.sectionId;
+				window.serviceObj = self.serviceObj;
+				window.gotoUrl = self.gotoUrl;
+				window.isRegister = self.isRegister;
+				window.phone = self.phone;
+				window.code = self.code;
+				window.title = self.title;
+				updateTitle(); //更新header
+				controlSendBtn(); //更新设置发送验证码按钮
+				sendCodeEvent(); //点击再次发送验证码
+				evenFinish(); //注册完成事件
+			});
+			/**
+			 *	点击再次发送验证码(事件)
+			 */
+			function sendCodeEvent() {
+					var sendCodeBtn = document.getElementById("send-btn-id");
+					sendCodeBtn.addEventListener('tap', function() {
+						sendCode(window.phone, sendCodeBtn, function(data) {
+							sendCodeBtn.setAttribute('issend', 1);
+							window.code = data;
+							controlSendBtn();
+						});
+					});
+				}
+				/**
+				 * 设置发送验证码的按钮：已经发送验证码，时间在60秒之内，则该按钮不可用；
+				 * 超过60秒，用户可以再次发送验证码
+				 */
+
+			function controlSendBtn() {
+					var sendBtn = document.getElementById("send-btn-id");
+					sendBtn.classList.add('mui-disabled');
+					var second = 59;
+					var si = setInterval(function() {
+						sendBtn.innerText = second + '秒后再发送';
+						second = second - 1;
+					}, 1000);
+					var st = setTimeout(function() {
+						sendBtn.innerText = '再次发送验证码';
+						clearInterval(si);
+						sendBtn.classList.remove('mui-disabled');
+						sendBtn.setAttribute('issend', 0);
+						clearTimeout(st);
+						issend = 0;
+					}, second * 1000);
+				}
+				/**
+				 * 更新标题
+				 * @param {Object} text
+				 */
+
+			function updateTitle() {
+				var text = '注册';
+				if (!window.isRegister) {
+					text = '忘记密码';
+				}
+				document.getElementById("title").innerText = text;
+			};
+			/**
+			 * 注册表單中控件的事件注册
+			 */
+			function evenFinish() {
+				var finishBtn = document.getElementById("finish-btn-id");
+				var codeInput = document.getElementById("code-input-id");
+				var pwdInput = document.getElementById("pwd-id");
+				var url = Routes.urls.user.register;
+				if (!window.isRegister) {
+					url = Routes.urls.user.updatePassword;
+				}
+				finishBtn.addEventListener('tap', function() {
+					var username = window.phone;
+					var code = codeInput.value;
+					var password = pwdInput.value;
+					if (code.length != 6) {
+						mui.toast('请输入6位验证码');
+						return;
+					}
+					if (code != window.code) {
+						mui.toast('验证码错误');
+						return;
+					}
+					if (password.length < 6) {
+						mui.toast("密码长度至少为6位");
+						return;
+					}
+					mui.ajax(url, {
+						data: {
+							username: username,
+							verifycode: code,
+							password1: password
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							if (data && data.success) {
+								//注册成功自动登录
+								window.localStorage.setItem('isAlreadyLogin', true);
+								window.localStorage.setItem("phone", username);
+								window.localStorage.setItem("password", password);
+								mui.openWindow({
+									id: window.gotoUrl.replace('.html', '') + '-win-' + window.sectionId,
+									url: window.gotoUrl,
+									waiting: {
+										autoShow: false
+									},
+									extras: {
+										title: window.title,
+										chapterTitle: window.title,
+										chapterId: window.chapterId,
+										sectionId: window.sectionId,
+										isFromLoginPage: true,
+										serviceObj: window.serviceObj
+									}
+								});
+							} else {
+								mui.toast(data.message);
+								window.localStorage.setItem('isAlreadyLogin', false);
+							}
+						},
+						error: function() {
+							window.localStorage.setItem('isAlreadyLogin', false);
+							mui.toast("网络异常");
+						}
+					});
+				});
+			};
+			 //
+			var old_back = mui.back;
+			mui.back = function() {
+				var self = plus.webview.currentWebview();
+				try {
+					self.opener().evalJS('try{mui.back=old_back}catch(e){}');
+				} catch (e) {}
+				old_back();
+			};
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title">验证</h1>
+		</header>
+		<div class="mui-content" style="padding: 0px 20px;">
+			<form class="mui-input-group" style="margin-top: 80px;">
+				<div class="mui-input-row">
+					<label>验证码</label>
+					<input id="code-input-id" type="text" placeholder="请输入验证码">
+				</div>
+				<div class="mui-input-row">
+					<label>密码</label>
+					<input id="pwd-id" type="password" placeholder="请输入密码" />
+				</div>
+				<div class="mui-button-row">
+					<button id="finish-btn-id" class="mui-btn mui-btn-primary" style="width: 40%;" onclick="return false;">完成</button>&nbsp;&nbsp;
+					<button id="send-btn-id" class="mui-btn mui-btn-primary mui-disabled" style="width: 40%;" onclick="return false;">60秒后再发送</button>
+				</div>
+			</form>
+		</div>
+	</body>
+
+</html>

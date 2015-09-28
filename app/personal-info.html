@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script src="../js/routes.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-input-row {
+				padding-top: 9px !important;
+				height: 50px !important;
+			}
+			.mui-input-row:after {
+				right: 15px !important;
+			}
+			.my-picture {
+				height: 100px !important;
+			}
+			.my-radio {
+				height: 30px;
+				padding: 11px 15px;
+				overflow: hidden;
+				position: relative;
+			}
+			.my-span {
+				position: relative;
+			}
+			label {
+				width: 30% !important;
+			}
+			.my-mui-input-row:after {
+				height: 0px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title-id" class="mui-title">个人信息完善</h1>
+		</header>
+		<div class="mui-content">
+			<form id="info-form" class="mui-input-group" style="padding-top: 40px;">
+				<div class="mui-input-row">
+					<label>姓名</label>
+					<input id="name" name="name" type="text" placeholder="请输入姓名">
+				</div>
+				<div class="mui-input-row">
+					<label>身份证</label>
+					<input id="code" name="code" type="text" placeholder="请输入身份证号">
+				</div>
+				<div class="mui-button-row" style="margin-top: 20px;padding-bottom: 30px;height: 50px !important;">
+					<button type="button" id="sign-up-btn-id" class="mui-btn mui-btn-primary" style="width: 80%;" onclick="return false;">保存</button>&nbsp;&nbsp;
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript">
+			 //报名
+			function baoming() {
+					var _name = document.getElementById('name').value.replace(/\s+/g, "");
+					if (_name.length == 0) {
+						mui.toast('请输入姓名');
+						return;
+					}
+					var code = document.getElementById('code').value.replace(/\s+/g, "");
+					var reg = new RegExp("^[1-9]([0-9]{16}|[0-9]{13})[xX0-9]$");
+					if (code.length == 0) {
+						mui.toast('请输入身份证');
+						return;
+					}
+//					if (!reg.test(code)) {
+//						mui.toast('请输入正确的身份证');
+//						return;
+//					}
+					var url = Routes.urls.user.completeUserInfo;
+					var param = {
+						data: {
+							username: _name,
+							idcard: code,
+							phone: window.phone,
+							id:window.localStorage.getItem('userId')
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							if (data && data.success) {
+								mui.toast('更新完成');
+								window.localStorage.setItem('username', _name);
+								window.localStorage.setItem('idcard', code);
+								mui.back();
+							} else {
+								if (data.message) {
+									mui.toast(data.message);
+								} else {
+									mui.toast("系统繁忙，请稍候再试");
+								}
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							mui.toast("网络异常");
+						}
+					};
+					console.log(JSON.stringify(param))
+					mui.ajax(url, param);
+				}
+				/**
+				 *	加载用户详细信息
+				 */
+
+			function loadUserInfo() {
+				var _userName = window.localStorage.getItem('username');
+				var idcard = window.localStorage.getItem('idcard');
+				if (_userName != "undefined") {
+					document.getElementById('name').value = _userName;
+					document.getElementById("code").value = idcard;
+				}
+			}
+			mui.init();
+			mui.plusReady(function() {
+				window.phone = window.localStorage.getItem('phone');
+				toastNetworkInfo("网络异常，请检查");
+				loadUserInfo();
+				document.getElementById("sign-up-btn-id").addEventListener('tap', function() {
+					var result = toastNetworkInfo("网络异常，请检查");
+					if (result) {
+						baoming();
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>

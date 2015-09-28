@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>会计人员信息查询</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/iconfont.css">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title">会计人员信息查询</h1>
+		</header>
+		<div class="mui-content" id="my-content-id">
+			<!--<div style="height: 80px;"></div>-->
+			<!--<br/>
+			<br/>
+			<br/> 这里是内容，你懂得~~
+			<br/>
+			<br/> 好扯淡的~~
+			<br/>
+			<br/>-->
+			<!--<br /><br /><br /><br /><br />-->
+			<div id="body" style="height: 500px;margin-top: -100px;margin-left: -500px;margin-right: -500px;">
+			<iframe id="login-content-win-id" src="http://kj.qdf.gov.cn:1010/frame/Default.aspx?role=head-normal" frameborder="0" scrolling="auto" style="width: 100%;height: 100%;display: block;" onload="switchStyle(this)"></iframe>
+			</div>
+		</div>
+		<script type="text/javascript">
+			window._status = 1;
+			/**
+			 * 切换样式的核心方法
+			 * @param {Object} a
+			 * @param {Object} b
+			 * @param {Object} c
+			 */
+			function switchStyle(a, b, c) {
+				var iframe = document.getElementById("login-content-win-id");
+				var body = document.getElementById("body");
+				if (window._status) { // login page
+					body.style.height = '500px';
+					body.style.marginTop = '-100px';
+					body.style.marginLeft = '-500px';
+					body.style.marginRight = '-500px';
+					window._status = 0;
+				} else { //content page
+					body.style.height = '800px';
+					body.style.marginTop = '-90px';
+					body.style.marginLeft = '0px';
+					body.style.marginRight = '0px';
+					iframe.style.minWidth = '1300px';
+					window._status = 1;
+				}
+			}
+			
+			var old_back = mui.back;
+			mui.back = function() {
+				var self = plus.webview.currentWebview();
+				self.opener().evalJS('initJXJY();');
+				//执行mui封装好的窗口关闭逻辑；
+				old_back();
+			}
+		</script>
+	</body>
+
+</html>

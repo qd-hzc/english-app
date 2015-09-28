@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/iconfont.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/service.js"></script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			.title {
+				margin: 35px 15px 10px;
+				margin-bottom: 20px;
+				font-size: 24px;
+				font-weight: 700;
+				color: green;
+			}
+			.title+.content {
+				margin: 10px 15px 35px;
+				color: #bbb;
+				text-indent: 1em;
+				font-size: 14px;
+				line-height: 24px;
+			}
+			#list {
+				/*避免导航边框和列表背景边框重叠，看起来像两条边框似得；*/
+				
+				margin-top: -1px;
+			}
+			#topPopover {
+				position: fixed;
+				top: 16px;
+				right: 6px;
+				width: 150px !important;
+				z-index: 2;
+				top: 60px !important;
+			}
+			#topPopover .mui-popover-arrow {
+				left: auto;
+				right: 6px;
+			}
+			.mui-popover {
+				height: 100px;
+			}
+			.kaishi {
+				width: 100px;
+				height: 30px;
+				border-radius: 4px;
+				margin-left: auto;
+				margin-right: auto;
+				padding-top: 6px;
+				background-color: #EA5555;
+				color: white;
+				font-size: 14px;
+			}
+			.biaoti {
+				word-wrap: break-word;
+				word-break: normal;
+				white-space: normal;
+				height: 90px;
+				padding-top: 20px;
+				padding-left: 15px;
+				padding-right: 15px;
+				font-size: 18px;
+			}
+			.zhang {
+				height: 140px;
+				width: 90%;
+				margin: 0 auto;
+				border: 1px solid lightgray;
+				background-color: #F8F8F8;
+				border-radius: 6px;
+			}
+			.zhang:active {
+				background-color: #95DECA;
+				border: 1px solid #95DECA;
+			}
+			.mui-media-li-self {
+				margin-top: 30px;
+			}
+			.jindulan {
+				height: 100%;
+				background-color: #428bca;
+				border-bottom-left-radius: 4px;
+				border-top-left-radius: 4px;
+			}
+			.jindu {
+				text-align: center;
+				font-size: 12px;
+				margin: 0 auto;
+				width: 78%;
+				height: 25px;
+				border-radius: 4px;
+				background-color: #E2E6E5;
+			}
+			.my-course-img-1 {
+				/*margin-top: 50px !important;*/
+				
+				padding-top: 110px !important;
+				padding-bottom: 80px !important;
+				/*background-image: url(images/kuaiji.png);*/
+				
+				background-size: 100% 150px;
+				background-repeat: no-repeat;
+			}
+			.my-course-active {
+				width: 3px;
+				height: 100%;
+				background-color: red;
+				position: absolute;
+				margin-top: -32px;
+				margin-left: -10px;
+			}
+			.my-mui-navigate-right {
+				background-color: red !important;
+			}
+			.my-mui-table-view {
+				background-color: #EBEBEB !important;
+			}
+		</style>
+	</head>
+
+	<body style="margin: 0;padding: 0;">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title-id" class="mui-title"></h1>
+			<a id="info" class="mui-icon mui-pull-right"><i class="icon iconfont">&#xe730;</i></a>
+		</header>
+		<div id="offCanvasContentScroll" class="mui-content">
+			<div class="mui-scroll" id="my-scroll">
+				<ul id="list" class="mui-table-view mui-grid-view my-course-img-1 my-mui-table-view">
+				</ul>
+			</div>
+		</div>
+		<!--右上角弹出菜单-->
+		<div id="topPopover" class="mui-popover">
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a id="cuotiben" data-course-id="" data-href="review-chapter.html" data-type='2' style="color: red;">
+								<i class="mui-icon icon iconfont icon-zhangben" style="margin-right: 10px;"></i>错题本
+							</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a id="shoucangben" data-course-id="" data-href="review-chapter.html" data-type='1' style="color: blue;">
+								<i class="mui-icon icon iconfont icon-shu" style="margin-right: 10px;"></i>收藏本
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script type="text/html" id="template-course-id">
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" data-id="{code}" data-href="../dragIndex.html">{name}</a>
+			</li>
+		</script>
+		<script type="text/html" id="template-chapter-id">
+			<li class="mui-table-view-cell mui-media mui-col-xs-12 mui-media-li-self">
+				<a href="section.html" data-title="{name}" data-chapter-id='{code}'>
+					<div class="zhang">
+						<div class=" biaoti">
+							{name}
+						</div>
+						<div class="jindu" style="text-align: center;">
+							<div class="jindulan" style="width: {progress}%;">
+							</div>
+							<div style="margin-top:-22px;font-size: 12px;color: #4D4D4D;">已完成{progress}%</div>
+						</div>
+					</div>
+				</a>
+			</li>
+		</script>
+		<script>
+			/**
+			 * 初始化章
+			 */
+			function initChapterDom() {
+					queryCategory(window.self.courseId, function(rows) {
+						var scriptCourse = document.getElementById('template-chapter-id');
+						var template = scriptCourse.innerHTML;
+						var htmlStr = '';
+						for (var i = 0; i < rows.length; i++) {
+							var row = rows[i];
+							htmlStr += render(template, row);
+						}
+						var ct = document.getElementById('list');
+						ct.innerHTML = htmlStr;
+//						document.getElementById("list").style.backgroundImage = window.myimage; TODO 这里已删除，等需要背景图片的时候再打开吧
+					});
+				}
+				/**
+				 * 设置背景图片
+				 */
+
+			function setBackgrounImage() {
+					if (window.self.courseTitle == "会计基础") {
+						window.myimage = 'url(../images/kuaiji.png)';
+					} else if (window.self.courseTitle == "财经法规") {
+						window.myimage = 'url(../images/caijing.png)';
+					} else {
+						window.myimage = 'url(../images/diansuanhua.png)';
+					}
+				}
+				/**
+				 * 点击章时间
+				 */
+
+			function chapterTapEvent() {
+					mui('#list').on('tap', 'a', function() {
+						var chapterTitle = this.getAttribute('data-title');
+						var chapterId = this.getAttribute('data-chapter-id');
+						mui.openWindow({
+							id: 'section-win-' + chapterId,
+							url: this.href,
+							waiting: {
+								autoShow: true
+							},
+							extras: {
+								chapterTitle: chapterTitle,
+								chapterId: chapterId
+							}
+						})
+					});
+				}
+				//右上角菜单点击事件（收藏本、错题本）
+
+			function rightBarTapEvent() {
+					mui('#topPopover').on('tap', 'a', function() {
+						var courseId = this.getAttribute('data-course-id');
+						var href = this.getAttribute('data-href');
+						var type = this.getAttribute('data-type');
+						var title = this.innerHTML;
+						mui.openWindow({
+							id: 'bar-' + courseId,
+							url: href,
+							waiting: {
+								autoShow: true
+							},
+							extras: {
+								barTitle: title,
+								courseId: courseId,
+								type: type
+							}
+						})
+						mui("#topPopover").popover("toggle");
+					});
+				}
+				/**
+				 * 更新标题
+				 */
+			function updateTitle() {
+					var courseTitle = window.self.courseTitle;
+					if (courseTitle) {
+						var titleDom = document.getElementById('title-id');
+						titleDom.innerHTML = courseTitle;
+					}
+					setBackgrounImage();
+				}
+				/**
+				 * 点击应用，打开收藏本、错题本
+				 */
+
+			function infoTapEvent() {
+					document.getElementById('info').addEventListener('tap', function() {
+						mui("#topPopover").popover("toggle");
+					});
+				}
+			 mui.plusReady(function() {
+				window.self = plus.webview.currentWebview();
+				updateTitle();
+				initChapterDom();
+				infoTapEvent();
+				rightBarTapEvent();
+				chapterTapEvent();
+			});
+			
+			var old_back = mui.back;
+			mui.back = function() {
+				var self = plus.webview.currentWebview();
+				self.opener().evalJS('initDenglu();');
+				//执行mui封装好的窗口关闭逻辑；
+				old_back();
+			}
+		</script>
+	</body>
+
+</html>

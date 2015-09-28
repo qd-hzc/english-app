@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/iconfont.css">
+		<script src="js/mui.min.js"></script>
+		<script src="js/routes.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/service.js"></script>
+		<script src="js/update.js"></script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			.mui-off-canvas-left {
+				/*color: #fff;*/
+			}
+			.title {
+				margin: 35px 15px 10px;
+				margin-bottom: 20px;
+				font-size: 24px;
+				font-weight: 700;
+				color: green;
+			}
+			.title+.content {
+				margin: 10px 15px 35px;
+				color: #bbb;
+				text-indent: 1em;
+				font-size: 14px;
+				line-height: 24px;
+			}
+			#list {
+				/*避免导航边框和列表背景边框重叠，看起来像两条边框似得；*/
+				
+				padding-top: 130px;
+				margin-top: -1px;
+			}
+			#topPopover {
+				position: fixed;
+				top: 16px;
+				right: 6px;
+				width: 150px !important;
+				z-index: 2;
+				top: 60px !important;
+				height: 140px;
+			}
+			#topPopover .mui-popover-arrow {
+				left: auto;
+				right: 6px;
+			}
+			.mui-popover {
+				height: 100px;
+			}
+			.kaishi {
+				width: 100px;
+				height: 30px;
+				border-radius: 4px;
+				margin-left: auto;
+				margin-right: auto;
+				padding-top: 6px;
+				background-color: #EA5555;
+				color: white;
+				font-size: 14px;
+			}
+			.biaoti {
+				word-wrap: break-word;
+				word-break: normal;
+				white-space: normal;
+				height: 90px;
+				padding-top: 20px;
+				padding-left: 15px;
+				padding-right: 15px;
+				font-size: 18px;
+			}
+			.zhang {
+				height: 140px;
+				width: 90%;
+				margin: 0 auto;
+				border: 1px solid lightgray;
+				background-color: #F8F8F8;
+				border-radius: 6px;
+			}
+			.zhang:active {
+				background-color: #95DECA;
+				border: 1px solid #95DECA;
+			}
+			.mui-media-li-self {
+				margin-top: 30px;
+			}
+			.jindulan {
+				height: 100%;
+				background-color: #428bca;
+				border-bottom-left-radius: 4px;
+				border-top-left-radius: 4px;
+			}
+			.jindu {
+				text-align: center;
+				font-size: 12px;
+				margin: 0 auto;
+				width: 78%;
+				height: 25px;
+				border-radius: 4px;
+				background-color: #E2E6E5;
+			}
+			.my-course-img-1 {
+				/*margin-top: 50px !important;*/
+				
+				padding-bottom: 80px !important;
+				background-size: 100% 150px;
+				background-repeat: no-repeat;
+			}
+			.my-course-active {
+				width: 3px;
+				height: 100%;
+				background-color: red;
+				position: absolute;
+				margin-top: -32px;
+				margin-left: -10px;
+			}
+			.my-mui-navigate-right {
+				background-color: red !important;
+			}
+			.my-mui-table-view {
+				background-color: #EBEBEB !important;
+			}
+		</style>
+	</head>
+
+	<body style="margin: 0;padding: 0;">
+		<div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
+			<!--侧滑菜单部分-->
+			<aside id="offCanvasSide" class="mui-off-canvas-left">
+				<!--<div id="offCanvasSideScroll" class="mui-scroll-wrapper"><div class="mui-scroll">-->
+				<div class="title">课程</div>
+				<ul id="course-target-id" class="mui-table-view mui-table-view-chevron mui-table-view-inverted">
+				</ul>
+				<div id="btn-denglu-id" style="bottom: 30px;position: fixed;font-size: 20px;font-weight: 800;width: 100%;">
+					<hr />
+					<br />
+					<a style="padding:10px;margin-left:10%;border-radius: 3px;">
+						<span class="mui-icon mui-icon-person"></span>
+						<span id="span-login-id">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登&nbsp;&nbsp;录&nbsp;&nbsp;</span>
+					</a>
+				</div>
+				<!--</div></div>-->
+			</aside>
+			<!--主界面部分-->
+			<div class="mui-inner-wrap" style="position: fixed !important;top: -2px !important;">
+				<header class="mui-bar mui-bar-nav">
+					<a href="#offCanvasSide" class="mui-icon mui-action-menu mui-icon-bars mui-pull-left"></a>
+					<a id="info" class="mui-icon mui-pull-right"><i class="icon iconfont">&#xe730;</i></a>
+					<h1 id="title" class="mui-title">交际英语</h1>
+				</header>
+				<div id="offCanvasContentScroll" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll" id="my-scroll">
+						<ul id="list" class="mui-table-view mui-grid-view my-course-img-1 my-mui-table-view" style="height: 100% !important;">
+
+						</ul>
+					</div>
+
+				</div>
+				<!-- off-canvas backdrop -->
+				<div class="mui-off-canvas-backdrop"></div>
+			</div>
+		</div>
+					<!--右上角弹出菜单-->
+		<div id="topPopover" class="mui-popover">
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a id="cuotiben" data-course-id="" data-href="app/review-chapter.html" data-type='2' style="color: red;">
+								<i class="mui-icon icon iconfont icon-zhangben" style="margin-right: 10px;"></i>错题本
+							</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a id="shoucangben" data-course-id="" data-href="app/review-chapter.html" data-type='1' style="color: dodgerblue;">
+								<i class="mui-icon icon iconfont icon-shu" style="margin-right: 10px;"></i>收藏本
+							</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a id="bijiben" data-course-id="" data-href="app/review-chapter.html" data-type='3' style="color: green;">
+								<i class="mui-icon icon iconfont icon-shu" style="margin-right: 10px;"></i>笔记本
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/html" id="template-course-id">
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" data-id="{code}" data-href="dragIndex.html">{name}</a>
+			</li>
+		</script>
+		<script type="text/html" id="template-chapter-id">
+			<li class="mui-table-view-cell mui-media mui-col-xs-12 mui-media-li-self">
+				<a href="app/section.html" data-title="{name}" data-chapter-id='{code}'>
+					<div class="zhang">
+						<div class=" biaoti">
+							{name}
+						</div>
+						<div class="jindu" style="text-align: center;">
+							<div class="jindulan" style="width: {progress}%;">
+							</div>
+							<div style="margin-top:-22px;font-size: 12px;color: #4D4D4D;">已完成{progress}%</div>
+						</div>
+					</div>
+				</a>
+			</li>
+		</script>
+		<script type="text/javascript">
+			function setBackgrounImage() {
+					//课程上部插图
+					if (window.self.courseTitle == "交际英语") {
+						window.myimage = 'url(images/englishchatu-1.png)';
+					} else if (window.self.courseTitle == "阅读理解") {
+						window.myimage = 'url(images/englishchatu-2.png)';
+					} else if (window.self.courseTitle == "词汇与结构") {
+						window.myimage = 'url(images/englishchatu-3.png)';
+					} else if (window.self.courseTitle == "完形填空") {
+						window.myimage = 'url(images/englishchatu-4.png)';
+					} else if (window.self.courseTitle == "英译汉复习资料") {
+						window.myimage = 'url(images/englishchatu-5.png)';
+					} else {
+						window.myimage = 'url(images/englishchatu-6.png)';
+					}
+				}
+				/*--------------------------------------------------------------------------------------------------*/
+				/**
+				 * 初始化章
+				 */
+
+			function initChapterDom() {
+					queryCategory(window.self.courseId, function(rows) {
+						var scriptCourse = document.getElementById('template-chapter-id');
+						var template = scriptCourse.innerHTML;
+						var htmlStr = '';
+						for (var i = 0; i < rows.length; i++) {
+							var row = rows[i];
+							htmlStr += render(template, row);
+						}
+						var ct = document.getElementById('list');
+						ct.innerHTML = htmlStr;
+						mui('#offCanvasContentScroll').scroll().scrollTo(0, 0);
+						document.getElementById("list").style.backgroundImage = window.myimage;
+					});
+				}
+				/**
+				 * 初始化菜单
+				 * @param {Object} rows
+				 */
+
+			function initMenuDom(rows) {
+					var scriptCourse = document.getElementById('template-course-id');
+					var template = scriptCourse.innerHTML;
+					var htmlStr = '';
+					for (var i = 0; i < rows.length; i++) {
+						var row = rows[i];
+						htmlStr += render(template, row);
+					}
+					var ct = document.getElementById('course-target-id');
+					ct.innerHTML = htmlStr;
+				}
+				/**
+				 * 菜单点击
+				 */
+
+			function courseClickEvent() {
+					mui('#course-target-id').on('tap', 'a', function() {
+						window.offCanvasWrapper.offCanvas('close');
+						var courseId = this.getAttribute('data-id');
+						window.self.courseTitle = ('' + this.innerHTML).trim();
+						updateTitle();
+						setBackgrounImage();
+						window.self.courseId = courseId;
+						initCourseId();
+						initChapterDom();
+					});
+				}
+				/**
+				 * 点击章时间
+				 */
+
+			function chapterTapEvent() {
+					mui('#list').on('tap', 'a', function() {
+						var chapterTitle = this.getAttribute('data-title');
+						var chapterId = this.getAttribute('data-chapter-id');
+						mui.openWindow({
+							id: 'section-win-' + chapterId,
+							url: this.href,
+							waiting: {
+								autoShow: true
+							},
+							extras: {
+								chapterTitle: chapterTitle,
+								chapterId: chapterId
+							}
+						})
+					});
+				}
+				//右上角菜单点击事件（收藏本、错题本）
+
+			function rightBarTapEvent() {
+					mui('#topPopover').on('tap', 'a', function() {
+						var courseId = this.getAttribute('data-course-id');
+						var href = this.getAttribute('data-href');
+						var type = this.getAttribute('data-type');
+						var title = this.innerHTML;
+						if (type == 3) { // TODO 这个在实现后，记得删除，这是笔记本的处理逻辑
+							alert('近期上线，敬请期待');
+							return;
+						}
+						mui.openWindow({
+							id: 'bar-' + courseId,
+							url: href,
+							waiting: {
+								autoShow: true
+							},
+							extras: {
+								barTitle: title,
+								courseId: courseId,
+								type: type
+							}
+						})
+						mui("#topPopover").popover("toggle");
+					});
+				}
+				/**
+				 * 更新标题
+				 */
+
+			function updateTitle() {
+					var courseTitle = window.self.courseTitle;
+					if (courseTitle) {
+						var titleDom = document.getElementById('title');
+						titleDom.innerHTML = courseTitle;
+					} else {
+						window.self.courseTitle = '交际英语';
+					}
+					setBackgrounImage();
+				}
+				/**
+				 * 点击应用，打开收藏本、错题本
+				 */
+
+			function infoTapEvent() {
+				document.getElementById('info').addEventListener('tap', function() {
+					mui("#topPopover").popover("toggle");
+				});
+			}
+
+			function initCourseId() {
+					var cuotiben = document.getElementById('cuotiben');
+					var shoucangben = document.getElementById('shoucangben');
+					var bijiben = document.getElementById('bijiben');
+					cuotiben.setAttribute("data-course-id", window.self.courseId);
+					shoucangben.setAttribute('data-course-id', window.self.courseId);
+					bijiben.setAttribute('data-course-id', window.self.courseId);
+				}
+				/**
+				 * 不管登录与否，打开app即检查服务器端的category（大纲）是否有更新
+				 */
+
+			function ajaxAppVersion() {
+					var localCategoryVersion = window.localStorage.getItem('category_version');
+					if (!localCategoryVersion) {
+						window.localStorage.setItem('category_version', 1);
+						localCategoryVersion = window.localStorage.getItem('category_version');
+					}
+					mui.ajax(Routes.urls.syncdata.getAppVersion, {
+						data: {},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							if (data && data.version) {
+								updateLocalAppVersion(data.version);
+							}
+						}
+					});
+				}
+				/**
+				 * 启动自动登录
+				 */
+
+			function autoLogin() {
+				var phone = window.localStorage.getItem("phone");
+				var password = window.localStorage.getItem("password");
+				if (phone == null || password == null) {
+					//TODO 最后需要打开这个
+					window.localStorage.setItem('isAlreadyLogin', false);
+					return;
+				}
+				/**
+				 * 登录请求
+				 */
+				mui.ajax(Routes.urls.user.login, {
+					data: {
+						username: phone,
+						password: password
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						// TODO 这个地方需要在生产环境下去掉
+						//						data.success = true;
+						if (data && data.success) {
+							//记录用户登录信息
+							window.localStorage.setItem('isAlreadyLogin', true);
+							window.localStorage.setItem("phone", phone);
+							window.localStorage.setItem("password", password);
+							updateUserInfoToLocal();
+						} else {
+							window.localStorage.setItem('isAlreadyLogin', false);
+							mui.toast(data.message);
+						}
+					},
+					error: function() {}
+				});
+			}
+
+			function updateDengluMenu() {
+					var loginSpan = document.getElementById("span-login-id");
+					var phone = window.localStorage.getItem("phone");
+					if (phone && phone.length == 11) {
+						loginSpan.innerText = '个人中心';
+					}
+				}
+				/**
+				 * 初始化登录
+				 */
+
+			function initDenglu() {
+					alreadyLogin(function() {
+						var loginSpan = document.getElementById("span-login-id");
+						loginSpan.innerText = '个人中心';
+					}, function() {
+						var loginSpan = document.getElementById("span-login-id")
+						loginSpan.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登&nbsp;&nbsp;录&nbsp;&nbsp;';
+					});
+				}
+				/**
+				 * 注册登录事件
+				 */
+
+			function dengluEvent() {
+					document.getElementById("btn-denglu-id").addEventListener('tap', function() {
+						var loginSpan = this;
+						var phone = window.localStorage.getItem("phone");
+						if (phone && phone.length == 11) {
+							mui.openWindow({
+								id: 'personal-win',
+								url: 'app/personal.html',
+								waiting: {
+									autoShow: false
+								}
+							})
+						} else {
+							mui.openWindow({
+								id: 'login-win',
+								url: 'app/login.html',
+								waiting: {
+									autoShow: false
+								},
+								extras: {
+									sectionId: window.sectionId,
+									gotoUrl: '../dragIndex.html',
+									serviceObj: window.serviceObj
+								}
+							});
+						}
+					});
+				}
+				/**
+				 * 个推消息记录
+				 */
+
+			function getuiEvent() {
+				try {
+					/**
+					 * 个推的透传，使用key--value对，会重写msg中的title和content
+					 * title:正确，content：错误，则title是正确的信息，content则为json格式的数据
+					 * title:错误，content：正确，则title为“个推”，content是正确的信息
+					 */
+					plus.push.addEventListener("receive", function(msg) {
+						try {
+							//用户推送输入错误，则不再保存消息
+							var contents = msg.content;
+							var contentJson = JSON.parse(contents);
+						} catch (e) {
+							//用户推送正确的信息，保存信息到消息中心
+							saveMessage(msg);
+							if (msg) {
+								mui.openWindow({
+									id: "msg-center-win",
+									url: "app/msg-center.html",
+									waiting: {
+										autoShow: true
+									}
+								});
+							}
+						}
+					});
+				} catch (e) {}
+			}
+			mui.init();
+			mui.plusReady(function() {
+				ajaxAppVersion();
+				window.self = plus.webview.currentWebview();
+				if (!window.self.courseId) {
+					window.self.courseId = '0001';
+				}
+				//查询所有课程，加载课程菜单
+				queryAllCourse(function(rows) {
+					initChapterDom();
+					initMenuDom(rows);
+					courseClickEvent();
+					chapterTapEvent();
+					updateTitle();
+				});
+				initCourseId();
+				rightBarTapEvent();
+				dengluEvent();
+				initDenglu();
+				autoLogin();
+				getuiEvent();
+				infoTapEvent();
+				setTimeout(function() {
+					initUpdate();
+				}, 2000);
+				window.offCanvasWrapper = mui('#offCanvasWrapper');
+			});
+			 //首页返回键处理
+			 //处理逻辑：1秒内，连续两次按返回键，则退出应用；
+			var first = null;
+			mui.back = function() {
+				//首次按键，提示‘再按一次退出应用’
+				if (!first) {
+					first = new Date().getTime();
+					mui.toast('再按一次退出应用');
+					setTimeout(function() {
+						first = null;
+					}, 1000);
+				} else {
+					if (new Date().getTime() - first < 1000) {
+						plus.runtime.quit();
+					}
+				}
+			}
+			function call() {
+				//切换到拨打电话界面，但是不会直接拨打
+				//plus.device.dial("153",false);
+				//此方法可直接拨打电话
+				// 导入Activity、Intent类
+				var Intent = plus.android.importClass("android.content.Intent");
+				var Uri = plus.android.importClass("android.net.Uri");
+				// 获取主Activity对象的实例
+				var main = plus.android.runtimeMainActivity();
+				// 创建Intent
+				var uri = Uri.parse("tel:4001109999"); // 这里可修改电话号码
+				var call = new Intent("android.intent.action.CALL", uri);
+				// 调用startActivity方法拨打电话
+				main.startActivity(call);
+			}
+		</script>
+	</body>
+
+</html>

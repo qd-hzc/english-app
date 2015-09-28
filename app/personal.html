@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			.mui-bar-nav~.mui-content {
+				padding: 0;
+			}
+			.my-footer {
+				height: 100px;
+				position: fixed;
+				bottom: 0;
+				padding-left: 30px;
+				padding-right: 30px;
+				right: 0;
+				left: 0;
+				z-index: 10;
+			}
+			.my-mui-media-body {
+				font-size: 20px !important;
+				height: 35px !important;
+				line-height: 25px !important;
+				position: absolute;
+				top: 130px;
+				left: 130px;
+			}
+			.my-mui-grid-9 {
+				margin-top: 20px !important;
+				background-color: whitesmoke!important;
+			}
+			/*个人中心带底图的块*/
+			
+			.my-person-header {
+				width: 100%;
+			}
+			/*按钮的样式*/
+			
+			.my-baoming {
+				position: absolute;
+				top: 200px;
+				right: 40px;
+				font-size: 14px;
+			}
+			.my-baoming span {
+				color: #00cc00;
+			}
+			.button {
+				display: inline-block;
+				outline: none;
+				cursor: pointer;
+				text-align: center;
+				text-decoration: none;
+				font: 14px 'Microsoft yahei', Arial, Helvetica, sans-serif;
+				padding: 0.2em 2em;
+				text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+				-webkit-border-radius: .5em;
+				-moz-border-radius: .5em;
+				border-radius: .5em;
+				-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+				-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+				box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+				float: right;
+			}
+			.button:hover {
+				text-decoration: none;
+			}
+			.button:active {
+				position: relative;
+				top: 1px;
+			}
+			/* 深绿色按钮的样式 */
+			
+			.deepgreen {
+				color: white;
+				line-height: 30px;
+				background: #113f4a;
+				text-align: center;
+				background: -webkit-gradient(linear, left top, left bottom, from(#2e5e6a), to(#113f4a));
+				background: -moz-linear-gradient(top, #00adee, #0078a5);
+				filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#0078a5');
+			}
+			.deepgreen:hover {
+				background: #d21910;
+				background: -webkit-gradient(linear, left top, left bottom, from(#de5852), to(#d21910));
+				background: -moz-linear-gradient(top, #0095cc, #00678e);
+				filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#0095cc', endColorstr='#00678e');
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">个人中心</h1>
+		</header>
+		<div class="mui-content">
+			<img src="../images/person/person-header.jpg" width="100%" height="auto" />
+			<div class="my-mui-media-body">账号：
+				<a id="personal-id" href="javascript:;"></a>
+			</div>
+			<!--<div class="my-baoming">
+				<a href="javascript:;" class="button deepgreen">报名入口</a>
+			</div>-->
+			<div class="my-baoming">
+				已用时长：<span id="all-time-id"></span>&nbsp;&nbsp; 可用学时：
+				<span id="available-time-id"></span>
+			</div>
+			<ul class="my-mui-grid-9 mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3">
+					<a href="javascript:;" id="xitongshezhi-id">
+						<img src="../images/person/my-person-xitongshezhi.png" style="width: 100%;height: auto;" />
+						<div class="mui-media-body">系统设置</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3">
+					<a href="javascript:;" id="xiaoxizhongxin-id">
+						<img src="../images/person/my-person-xiaoxi.png" style="width: 100%;height: auto;" />
+						<div class="mui-media-body">消息中心</div>
+					</a>
+				</li>
+			</ul>
+			<div id="tuichu-id" style="margin: 0px 20%;margin-top: 20px;">
+				<a class="mui-btn mui-btn-block mui-btn-primary" style="font-size: 22px;padding: 5px 0px;">
+					退出账号
+				</a>
+			</div>
+			<script type="text/javascript">
+				/**
+				 * 点击账号跳转补充完善用户信息
+				 */
+				function personalInfoEvent() {
+						document.getElementById("personal-id").addEventListener('tap', function() {
+							mui.openWindow({
+								id: 'personalInfo-win',
+								url: 'personal-info.html'
+							})
+						})
+					}
+					/**
+					 * 设置用户账号信息
+					 */
+
+				function setAccount() {
+						var isAlreadyLogin = window.localStorage.getItem('isAlreadyLogin');
+						var phone = window.localStorage.getItem('phone');
+						if (isAlreadyLogin) {
+							var personal = document.getElementById("personal-id");
+							personal.innerHTML = phone;
+						}
+					}
+					/**
+					 * 退出登录状态
+					 */
+
+				function tuichuEvent() {
+						document.getElementById("tuichu-id").addEventListener('tap', function() {
+							var btnArray = ['是', '否'];
+							mui.confirm('确定要注销登录吗？', '', btnArray, function(e) {
+								if (e.index == 0) {
+									window.localStorage.setItem('isAlreadyLogin', false);
+									window.localStorage.setItem('phone', '');
+									mui.openWindow({
+										id: 'dragIndex-win',
+										url: '../dragIndex.html',
+										waiting: {
+											autoShow: false
+										}
+									});
+								};
+							});
+						});
+					}
+					/**
+					 * 点击消息中心
+					 */
+
+				function xiaoxizhongxinEvent() {
+						document.getElementById("xiaoxizhongxin-id").addEventListener('tap', function() {
+							mui.openWindow({
+								id: 'msg-center-win',
+								url: 'msg-center.html',
+								waiting: {
+									autoShow: false
+								}
+							});
+						})
+					}
+					/**
+					 * 点击设置
+					 */
+
+				function xitongshezhiEvent() {
+						document.getElementById("xitongshezhi-id").addEventListener('tap', function() {
+							mui.openWindow({
+								id: 'seting-win',
+								url: 'seting.html',
+								waiting: {
+									autoShow: false
+								}
+							});
+						});
+					}
+					/**
+					 * 设置学习时长
+					 */
+
+				function setTimeEvent() {
+				
+					document.getElementById("all-time-id").innerText = getRemainTime() +'分钟';
+					document.getElementById("available-time-id").innerText = getAvaliableTime() +'分钟';
+				}
+				mui.init();
+				mui.plusReady(function() {
+					setAccount();
+					tuichuEvent();
+					xiaoxizhongxinEvent();
+					xitongshezhiEvent();
+					personalInfoEvent();
+					setTimeEvent();
+				});
+			</script>
+	</body>
+
+</html>

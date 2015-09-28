@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>chapter</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/iconfont.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/service.js"></script>
+		<style type="text/css">
+			#list {
+				/*避免导航边框和列表背景边框重叠，看起来像两条边框似得；*/
+				
+				margin-top: -1px;
+			}
+			#topPopover {
+				position: fixed;
+				top: 16px;
+				right: 6px;
+			}
+			#topPopover .mui-popover-arrow {
+				left: auto;
+				right: 6px;
+			}
+			.mui-popover {
+				height: 100px;
+			}
+			.kaishi {
+				width: 100px;
+				height: 30px;
+				border-radius: 4px;
+				margin-left: auto;
+				margin-right: auto;
+				padding-top: 6px;
+				background-color: #EA5555;
+				color: white;
+				font-size: 14px;
+			}
+			.biaoti {
+				word-wrap: break-word;
+				word-break: normal;
+				white-space: normal;
+				height: 70px;
+				padding-top: 20px;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+			.zhang {
+				height: 120px;
+				width: 90%;
+				margin: 0 auto;
+				border: 1px solid lightgray;
+				background-color: white;
+				border-radius: 4px;
+			}
+			.mui-media-li-self {
+				margin-top: 30px;
+			}
+			.jindulan {
+				height: 100%;
+				background-color: #428bca;
+				border-bottom-left-radius: 4px;
+				border-top-left-radius: 4px;
+			}
+			.jindu {
+				text-align: center;
+				font-size: 12px;
+				margin: 0 auto;
+				width: 60%;
+				height: 20px;
+				border-radius: 4px;
+				background-color: lightgray;
+			}
+			.mui-popover {
+				width: 150px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<ul id="list" class="mui-table-view mui-grid-view" style="padding-top: 30px;
+			padding-bottom: 30px;background-color: #F3F3F3;">
+			</ul>
+		</div>
+		<!--右上角弹出菜单-->
+		<div id="topPopover" class="mui-popover ">
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a id="cuotiben" data-course-id="" data-href="review-chapter.html" data-type='2' style="color: red;">
+								<i class="mui-icon icon iconfont icon-zhangben" style="margin-right: 10px;"></i>错题本
+							</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a id="shoucangben" data-course-id="" data-href="review-chapter.html" data-type='1' style="color: blue;">
+								<i class="mui-icon icon iconfont icon-shu" style="margin-right: 10px;"></i>收藏本
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script type="text/html" id="template-chapter-id">
+			<li class="mui-table-view-cell mui-media mui-col-xs-12 mui-media-li-self">
+				<a href="section.html" data-title="{name}" data-chapter-id='{code}'>
+					<div class="zhang">
+						<div class=" biaoti">
+							{name}
+						</div>
+						<div class="jindu" style="text-align: center;">
+							<div class="jindulan" style="width: {progress}%;">
+							</div>
+							<div style="margin-top:-20px;font-size: 12px;color: #4D4D4D;">已完成{progress}%</div>
+						</div>
+					</div>
+				</a>
+			</li>
+		</script>
+		<script>
+			function initDom() {
+				var courseId = window.self.courseId;
+				queryCategory(courseId, function(rows) {
+					var scriptCourse = document.getElementById('template-chapter-id');
+					var template = scriptCourse.innerHTML;
+					var htmlStr = '';
+					for (var i = 0; i < rows.length; i++) {
+						var row = rows[i];
+						htmlStr += render(template, row);
+					}
+					var ct = document.getElementById('list');
+					ct.innerHTML = htmlStr;
+				});
+			}
+
+			function chapterTapEvent() {
+				mui('#list').on('tap', 'a', function() {
+					var chapterTitle = this.getAttribute('data-title');
+					var chapterId = this.getAttribute('data-chapter-id');
+					mui.openWindow({
+						id: 'section-win',
+						url: this.href,
+						waiting: {
+							autoShow: true
+						},
+						extras: {
+							chapterTitle: chapterTitle,
+							chapterId: chapterId
+						}
+					})
+				});
+			}
+
+			 //右上角菜单点击事件（收藏本、错题本）
+			function rightBarTapEvent() {
+				mui('#topPopover').on('tap', 'a', function() {
+					var courseId = this.getAttribute('data-course-id');
+					var href = this.getAttribute('data-href');
+					var type = this.getAttribute('data-type');
+					var title = this.innerHTML;
+					mui.openWindow({
+						id: 'bar-' + courseId,
+						url: href,
+						waiting: {
+							autoShow: true
+						},
+						extras: {
+							barTitle: title,
+							courseId: courseId,
+							type: type
+						}
+					})
+					mui("#topPopover").popover("toggle");
+				});
+			}
+
+			 //只有ios支持的功能需要在Android平台隐藏；
+			if (mui.os.android) {
+				var list = document.querySelectorAll('.ios-only');
+				if (list) {
+					for (var i = 0; i < list.length; i++) {
+						list[i].style.display = 'none';
+					}
+				}
+			}
+
+			mui.plusReady(function() {
+				window.self = plus.webview.currentWebview();
+				initDom();
+
+				var cuotiben = document.getElementById('cuotiben');
+				var shoucangben = document.getElementById('shoucangben');
+				cuotiben.setAttribute("data-course-id", window.self.courseId);
+				shoucangben.setAttribute('data-course-id', window.self.courseId);
+				chapterTapEvent();
+
+				rightBarTapEvent();
+
+				//关闭splash页面；
+				plus.navigator.closeSplashscreen();
+			});
+
+			var index = null; //主页面
+			function openMenu() {
+				!index && (index = mui.currentWebview.parent());
+				mui.fire(index, "menu:open");
+			}
+
+			 //在android4.4.2中的swipe事件，需要preventDefault一下，否则触发不正常
+//			window.addEventListener('dragright', function(e) {
+//				e.detail.gesture.preventDefault();
+//			});
+//
+//			 //监听右滑事件，若侧滑菜单未显示，右滑要显示菜单；
+//			window.addEventListener("swiperight", function(e) {
+//				//默认滑动角度在-45度到45度之间，都会触发右滑菜单，为避免误操作，可自定义限制滑动角度；
+//				if (Math.abs(e.detail.angle) < 4) {
+//					openMenu();
+//				}
+//			});
+		</script>
+	</body>
+
+</html>

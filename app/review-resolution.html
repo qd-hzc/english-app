@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>exam</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/iconfont.css">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/des.js"></script>
+		<script src="../js/service.js"></script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			.youbar {
+				margin-right: 15px !important;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<a id="shoucang" data-section-id='' data-name="收藏本" data-href='' class="youbar mui-pull-right">
+				<i class="mui-icon icon iconfont icon-shoucang2"></i>
+			</a>
+			<h1 id="title" class="mui-title">试题解析</h1>
+		</header>
+		<footer class="mui-bar mui-bar-footer">
+			<ul class="mui-pager" style="margin-top: 5px;">
+				<li id="pre-id" class="mui-disabled">
+					<a> &nbsp;&nbsp;上&nbsp;&nbsp;一&nbsp;&nbsp;题&nbsp;&nbsp; </a>
+				</li>
+				<li id="next-id" style="margin-left: 50px;">
+					<a> &nbsp;&nbsp;下&nbsp;&nbsp;一&nbsp;&nbsp;题&nbsp;&nbsp; </a>
+				</li>
+			</ul>
+		</footer>
+		<div class="mui-content">
+			<div class="my-pagination" style="margin-top: 20px;margin-bottom: 20px;" id="list">
+			</div>
+		</div>
+		<script type="text/html" id="template-question-id">
+			<div class="mui-card duoxuan" data-id="{id}" style="padding-top: 6px;padding-bottom: 6px;display: none;">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<b style="color: blue;">{indexed}/{pageSize}({type})</b>: {name}
+					</li>
+		</script>
+		<script type="text/html" id="template-option-id">
+			<li class="mui-table-view-cell mui-{inputType} mui-left">
+				<input class="question" name="{inputName}" type="{inputType}" disabled data-checked="false" {checked} data-label="{label}">{label}：{name}
+			</li>
+		</script>
+		<script type="text/html" id="template-resolution-id">
+			<li class="mui-table-view-cell">解析：</li>
+			<li class="mui-table-view-cell">{name}</li>
+		</script>
+		<script type="text/html" id="template-correct-id">
+
+			<li class="mui-table-view-cell" style="color: {isOkStyle};">你的答案：{userAnswer}，正确答案：{questionAnswer}</li>
+		</script>
+		<script type="text/html" id="template-material-id">
+			<li class="mui-table-view-cell" style="display: {display};">{name}</li>
+		</script>
+		<script>
+			function preAndNextEvent() {
+				var preDom = document.getElementById("pre-id");
+				preDom.addEventListener('tap', function() {
+					prev();
+				});
+				var nextDom = document.getElementById("next-id");
+				nextDom.addEventListener('tap', function() {
+					next();
+				});
+			}
+			var childPagination = null;
+
+			function hideAll() {
+				for (var i = 0; i < childPagination.length; i++) {
+					var child = childPagination[i];
+					child.style.display = 'none';
+				}
+			}
+
+
+			function showFirst() {
+				childPagination[0].style.display = 'block';
+			}
+
+
+			window.currentNo = 0;
+
+			function show(idx) {
+				hideAll();
+				window.currentNo = idx;
+				for (var i = 0; i < childPagination.length; i++) {
+					if (i == idx) {
+						var child = childPagination[i];
+						child.style.display = 'block';
+					}
+				}
+			}
+
+			function preBtnEffect() {
+				if (window.currentNo <= 1) {
+					document.getElementById("pre-id").classList.add('mui-disabled');
+				}
+				if (window.currentNo < childPagination.length) {
+					document.getElementById("next-id").classList.remove('mui-disabled');
+				}
+			}
+
+			function nextBtnEffect() {
+				if (window.currentNo >= 0) {
+					document.getElementById("pre-id").classList.remove('mui-disabled');
+				}
+				if (window.currentNo >= (childPagination.length - 2)) {
+					document.getElementById("next-id").classList.add('mui-disabled');
+				}
+			}
+
+			function prev() {
+				preBtnEffect();
+				if (window.currentNo) {
+					window.currentNo = window.currentNo - 1;
+					show(window.currentNo);
+					var _self = childPagination[currentNo]
+					var _questionId = _self.getAttribute("data-id");
+					var questionAll = window.serviceObj.getQuestion(_questionId);
+					updateBookmarkIco(questionAll);
+				}
+			}
+
+			function next() {
+				nextBtnEffect();
+				if (window.currentNo < (childPagination.length - 1)) {
+					window.currentNo = window.currentNo + 1;
+					show(window.currentNo);
+
+					var _self2 = childPagination[currentNo]
+					var _questionId2 = _self2.getAttribute("data-id");
+					var questionAll = window.serviceObj.getQuestion(_questionId2);
+					updateBookmarkIco(questionAll);
+					return false;
+				} else {
+					return true;
+				}
+
+			}
+
+			window.addEventListener("swiperight", prev);
+			window.addEventListener("swipeleft", next);
+
+			 //更新收藏图标，显示当前题是否被收藏
+			function updateBookmarkIco(questionAll) {
+				var questionId = questionAll.question.id;
+				var hasCollect = questionAll.hasCollect;
+				var shoucangDom = document.getElementById("shoucang");
+				shoucangDom.setAttribute("data-question-id", questionId);
+				if (hasCollect) {
+					shoucangDom.style.color = "red";
+				} else {
+					shoucangDom.style.color = "white";
+				}
+			}
+
+			 //点击收藏，收藏此试题
+			function collectEvent() {
+				document.getElementById('shoucang').addEventListener('tap', function() {
+					var _questionId = this.getAttribute('data-question-id');
+					var questionAll = window.serviceObj.getQuestion(_questionId);
+					if (questionAll.hasCollect) {
+						mui.toast('已取消收藏');
+					} else {
+						mui.toast('已添加收藏');
+					}
+					window.serviceObj.updateBookMark(questionAll);
+					updateBookmarkIco(questionAll);
+				});
+			}
+
+			function initDom() {
+				var tq = document.getElementById('template-question-id').innerHTML;
+				var to = document.getElementById('template-option-id').innerHTML;
+				var tr = document.getElementById("template-resolution-id").innerHTML;
+				var tc = document.getElementById("template-correct-id").innerHTML;
+				var tm = document.getElementById("template-material-id").innerHTML;
+				
+				var list = document.getElementById('list');
+
+				queryQuestionAllForReview(window.sectionId, window.type, function(all) {
+
+				}, function(serviceObj) {
+					window.serviceObj = minix(serviceObj);
+
+					var tempHtml = '';
+					for (var i = 0; i < window.serviceObj.questionList.length; i++) {
+						var all = window.serviceObj.questionList[i];
+						var htmlStr = '';
+						if (!all.question.isOk) {
+							all.question.isOkStyle = 'red';
+						} else {
+							all.question.isOkStyle = 'green';
+						}
+						if (all.material.id) {
+							all.material.display = 'block';
+						} else {
+							all.material.display = "none";
+						}
+
+						htmlStr += render(tq, all.question);
+						for (var j = 0; j < all.options.length; j++) {
+							var option = all.options[j];
+							if (option.isSelected) {
+								option.checked = 'checked';
+							} else {
+
+							}
+							htmlStr += render(to, option);
+						}
+						htmlStr += render(tc, all.question);
+						htmlStr += render(tm, all.material);
+						htmlStr += render(tr, all.resolution);
+						htmlStr += "</ul></div>";
+						tempHtml += htmlStr;
+					}
+					list.innerHTML = list.innerHTML + tempHtml;
+
+					childPagination = document.getElementsByClassName("my-pagination")[0].children;
+					hideAll();
+					showFirst();
+					var indexed = self.indexed; //点击解析上的具体哪个试题获取到的试题的题号
+					if (indexed) {
+						show(indexed - 1);
+					}
+					preAndNextEvent();
+					updateBookmarkIco(window.serviceObj.questionList[0]);
+					collectEvent();
+					
+					if (window.serviceObj.questionList.length <= 1) {
+						var footer = document.getElementsByTagName("footer")[0];
+						footer.parentElement.removeChild(footer);
+					}
+				})
+
+			}
+
+			function disableBookmarkBtn() {
+				if (window.type == 2) {
+					document.getElementById("shoucang").style.display = 'none';
+				}
+			}
+
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+
+				window.sectionId = self.sectionId;
+				window.type = self.type;
+				disableBookmarkBtn();
+				initDom();
+			});
+
+			var old_back = mui.back;
+			mui.back = function() {
+				var self = plus.webview.currentWebview();
+				self.opener().evalJS('initDom();');
+				//执行mui封装好的窗口关闭逻辑；
+				old_back();
+			}
+		</script>
+
+	</body>
+
+</html>

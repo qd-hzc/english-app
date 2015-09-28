@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>section</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/iconfont.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/routes.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/service.js"></script>
+		<style type="text/css">
+			#list {
+				/*避免导航边框和列表背景边框重叠，看起来像两条边框似得；*/
+				
+				margin-top: -1px;
+			}
+			.kaishi {
+				width: 70px;
+				height: 25px;
+				border-radius: 3px;
+				margin-left: auto;
+				margin-right: auto;
+				padding-top: 3px;
+				background-color: #EA5555;
+				color: white;
+				font-size: 14px;
+			}
+			.biaoti {
+				word-wrap: break-word;
+				word-break: normal;
+				white-space: normal;
+				height: 50px;
+				padding-left: 5px;
+				padding-right: 5px;
+			}
+			.jie {
+				height: 100px;
+				width: 100%;
+				min-width: 70px;
+				padding-top: 10px;
+				text-align: center;
+				border: 1px solid lightgray;
+				background-color: #FBF8F8;
+				border-radius: 2px;
+				font-size: 17px;
+			}
+			.my-li-active:active {
+				background-color: #95DECA;
+			}
+			.suo {
+				background-color: green;
+				background-clip: padding-box;
+				color: white;
+				z-index: 9999;
+				border-radius: 35px;
+				width: 40px;
+				height: 40px;
+				position: absolute;
+				top: 40px;
+				padding-top: 9px;
+				position: absolute;
+				left: 50%;
+				margin-left: -12px;
+			}
+			.zhezhao {
+				position: absolute;
+				width: 100%;
+				height: 100px;
+				z-index: 99;
+				background-color: black;
+				top: 10px;
+				opacity: 0.4;
+			}
+			.mui-table-view:before {
+				height: 0px !important;
+			}
+			.mui-table-view:after {
+				height: 0px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title">标题</h1>
+		</header>
+		<div class="mui-content">
+			<ul id="list" class="mui-table-view mui-grid-view" style="padding-top: 10px;margin-bottom: 0px;height: 100%;">
+			</ul>
+		</div>
+
+		<script type="text/html" id="template-section-yes-id">
+			<li class="mui-table-view-cell mui-media mui-col-xs-6">
+				<a href="question.html" data-section-id="{code}">
+					<div class="jie my-li-active">
+						<div class="biaoti">
+							{name}
+						</div>
+						<div class="kaishi">
+							开始
+						</div>
+					</div>
+				</a>
+			</li>
+		</script>
+
+		<script type="text/html" id="template-section-no-id">
+			<li class="mui-table-view-cell mui-media mui-col-xs-6">
+				<a data-section-id="{code}">
+					<div class="jie">
+						<div class="biaoti" style="color: black;">
+							{name}
+						</div>
+						<div class="kaishi">
+							开始
+						</div>
+						<div class="zhezhao">
+						</div>
+						<span class="suo"><span class=" icon iconfont icon-suo1"></span></span>
+					</div>
+				</a>
+			</li>
+		</script>
+
+		<script>
+			function initDom() {
+				var chapterId = window.self.chapterId;
+				var ct = document.getElementById('list');
+				ct.innerHTML = '';
+				queryCategory(chapterId, function(rows) {
+					var scriptSectionNo = document.getElementById('template-section-no-id');
+					var scriptSectionYes = document.getElementById('template-section-yes-id');
+					var noTemplate = scriptSectionNo.innerHTML;
+					var yesTemplate = scriptSectionYes.innerHTML;
+					var htmlStr = '';
+					for (var i = 0; i < rows.length; i++) {
+						var row = rows[i];
+						if (row.status == 1) { // 不锁住
+							htmlStr += render(yesTemplate, row);
+						} else if (row.status == -1) { // 锁住
+							htmlStr += render(noTemplate, row);
+						}
+					}
+					ct.innerHTML = htmlStr;
+				});
+			}
+
+			function chapterTapEvent() {
+					mui('#list').on('tap', 'a', function() {
+						var name = this.getAttribute('name');
+						var sectionId = this.getAttribute('data-section-id');
+						var myhref = this.href;
+						var cantSee = !!window.localStorage.getItem("__cant_see");
+						console.log('------------------>是否可以用：'+cantSee)
+						if (checkIsContinue(sectionId)) { // 可以免费看的内容
+							mui.openWindow({
+								id: 'question-win-' + sectionId,
+								url: myhref,
+								waiting: {
+									autoShow: false
+								},
+								extras: {
+									name: name,
+									sectionId: sectionId
+								}
+							});
+						} else {
+							alreadyLogin(function() {
+								if (cantSee) {
+									//									mui.toast('使用时间已超出您购买的时长，请先续费');
+									mui.toast('此内容需要购买，我们会在24小时之内电话联系您进行购买');
+								} else {
+									mui.openWindow({
+										id: 'question-win-' + sectionId,
+										url: myhref,
+										waiting: {
+											autoShow: false
+										},
+										extras: {
+											name: name,
+											sectionId: sectionId
+										}
+									});
+								}
+							}, function() {
+								mui.openWindow({
+									id: 'login-win-' + window.chapterId,
+									url: 'login.html',
+									waiting: {
+										autoShow: false
+									},
+									extras: {
+										title: window.chapterTitle,
+										sectionId: window.chapterId,
+										chapterId: window.chapterId,
+										gotoUrl: 'section.html'
+									}
+								});
+							});
+						}
+					});
+				}
+				//只有ios支持的功能需要在Android平台隐藏；
+			if (mui.os.android) {
+				var list = document.querySelectorAll('.ios-only');
+				if (list) {
+					for (var i = 0; i < list.length; i++) {
+						list[i].style.display = 'none';
+					}
+				}
+			}
+			mui.plusReady(function() {
+				window.self = plus.webview.currentWebview();
+				window.isFromLoginPage = window.self.isFromLoginPage;
+				window.chapterId = self.chapterId;
+				window.chapterTitle = self.chapterTitle;
+				initDom();
+				chapterTapEvent();
+				var titleElem = document.getElementById("title")
+				titleElem.innerHTML = self.chapterTitle;
+				titleElem.className = "mui-title mui-fadein";
+				
+				// 获取所有Webview窗口
+	var wvs=plus.webview.all();
+	for(var i=0;i<wvs.length;i++){
+		console.log("webview"+i+": "+wvs[i].id);
+	}
+			});
+			var index = null; //主页面
+			function openMenu() {
+					!index && (index = mui.currentWebview.parent());
+					mui.fire(index, "menu:open");
+				}
+				//在android4.4.2中的swipe事件，需要preventDefault一下，否则触发不正常
+			window.addEventListener('dragright', function(e) {
+				e.detail.gesture.preventDefault();
+			});
+			 //监听右滑事件，若侧滑菜单未显示，右滑要显示菜单；
+			window.addEventListener("swiperight", function(e) {
+				//默认滑动角度在-45度到45度之间，都会触发右滑菜单，为避免误操作，可自定义限制滑动角度；
+				if (Math.abs(e.detail.angle) < 4) {
+					openMenu();
+				}
+			});
+			var old_back = mui.back;
+			mui.back = function() {
+				var self = plus.webview.currentWebview();
+				try {
+					self.opener().evalJS('try{updateDengluMenu();}catch(e){} try{initChapterDom();}catch(e){} try{mui.back=old_back;}catch(e){}');
+				} catch (e) {}
+				if (window.isFromLoginPage) {
+					try {
+						var wv = plus.webview;
+						var chapterId = window.chapterId;
+						wv.close('login-win');
+						wv.close('verifyCode-win');
+						wv.show('dragIndex-win');
+					} catch (e) {
+						console.log(JSON.stringify(e))
+					}
+				} else {
+					//执行mui封装好的窗口关闭逻辑；
+					old_back();
+				}
+			}
+		</script>
+	</body>
+
+</html>

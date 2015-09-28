@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta charset="utf-8">
+		<title>会计自学</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/service.js"></script>
+		<script src="../js/des.js"></script>
+		<script src="../js/routes.js"></script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			header.mui-bar {
+				/*display: none;*/
+			}
+			.mui-bar-nav~.mui-content {
+				padding: 0;
+			}
+			.mui-content-padded {
+				/*padding: 10px;*/
+			}
+			.mui-content-padded a {
+				margin: 5px;
+				width: 45px;
+				height: 45px;
+				display: inline-block;
+				border-radius: 5px;
+				padding-top: 16px;
+			}
+			.mui-content-padded a {
+				margin-top: 12px;
+			}
+			.mui-content a {
+				color: #8F8F94;
+			}
+			.mui-content a.active {
+				color: #007aff;
+			}
+			.mui-input-row {
+				padding-top: 9px !important;
+				height: 50px !important;
+			}
+			.mui-input-row:after {
+				right: 15px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title-id" class="mui-title">登录</h1>
+			<a id="retrieve-password-id" href="#context-retrieve-id" class="mui-pull-right mui-tab-item" style="font-size: 16px;padding-top:15px;">忘记密码</a>
+		</header>
+		<div class="mui-content" style="padding: 0px 20px;">
+
+			<div id="context-login-id" class="mui-control-content mui-active">
+				<form class="mui-input-group" style="margin-top: 80px;">
+					<div class="mui-input-row">
+						<label>手机号</label>
+						<input id="login-username-input-id" type="text" placeholder="请输入手机号码">
+					</div>
+					<div class="mui-input-row">
+						<label>密码</label>
+						<input id="login-password-input-id" type="password" placeholder="请输入密码">
+					</div>
+					<div class="mui-button-row" style="margin-top: 20px;">
+						<button id="login-login-btn-id" class="mui-btn mui-btn-primary" style="width: 80%;" onclick="return false;">登录</button>&nbsp;&nbsp;
+					</div>
+					<div class="mui-button-row" style="margin-top: 20px;">
+						<div class="mui-text-center">
+							<span style="font-size: 0.8em;">还没有账号</span>&nbsp;&nbsp;
+							<a id="login-register-id" onclick="return false;" href="#context-register-id" class="mui-tab-item" style="color:darkred;text-decoration: underline;">去免费注册</a>
+						</div>
+					</div>
+				</form>
+				<script type="text/javascript">
+					/**
+					 * 登录表單中控件的事件注册
+					 */
+					function eventLogin() {
+						var loginBtn = document.getElementById("login-login-btn-id");
+						var usernameBtn = document.getElementById("login-username-input-id");
+						var passwordBtn = document.getElementById("login-password-input-id");
+						loginBtn.addEventListener('tap', function() {
+							if (!toastNetworkInfo("网络异常，请检查")) {
+								return;
+							}
+							var username = usernameBtn.value;
+							var password = passwordBtn.value;
+							if (username.length == 0) {
+								mui.toast('请输入手机号码');
+								return false;
+							}
+							if (username.length != 11) {
+								mui.toast('请输入有效的手机号码');
+								return false;
+							}
+							if (!myreg.test(username)) {
+								mui.toast('请输入有效的手机号码');
+								return false;
+							}
+							if (password.length == 0) {
+								mui.toast('请输入密码');
+								return;
+							}
+							mui.ajax(Routes.urls.user.login, {
+								data: {
+									username: username,
+									password: password
+								},
+								dataType: 'json', //服务器返回json格式数据
+								type: 'post', //HTTP请求类型
+								timeout: 10000, //超时时间设置为10秒；
+								success: function(data) {
+									if (data && data.success) {
+										//记录用户登录信息
+										window.localStorage.setItem('isAlreadyLogin', true);
+										window.localStorage.setItem("phone", username);
+										window.localStorage.setItem("password", password);
+										updateUserInfoToLocal();
+										mui.openWindow({
+											id: window.gotoUrl.replace('.html', '') + '-win-' + window.sectionId,
+											url: window.gotoUrl,
+											extras: {
+												title: window.title,
+												chapterTitle: window.title,
+												chapterId: window.chapterId,
+												sectionId: window.sectionId,
+												isFromLoginPage: true,
+												serviceObj: window.serviceObj
+											}
+										});
+									} else {
+										window.localStorage.setItem('isAlreadyLogin', false);
+										mui.toast(data.message);
+									}
+								},
+								error: function() {
+									window.localStorage.setItem('isAlreadyLogin', false);
+									mui.toast("网络异常");
+								}
+							});
+						});
+					};
+				</script>
+			</div>
+
+			<div id="context-register-id" class="mui-control-content">
+				<form class="mui-input-group" style="margin-top: 80px;">
+					<div class="mui-input-row">
+						<label>手机号</label>
+						<input id="register-username-input-id" type="text" placeholder="请输入手机号码">
+					</div>
+					<div class="mui-button-row" style="margin-top: 10px;margin-bottom: 10px;">
+						<button id="register-send-btn-id" class="mui-btn mui-btn-primary" style="width: 80%;" onclick="return false;">发送验证码</button>
+					</div>
+				</form>
+				<script type="text/javascript">
+					/**
+					 * 注册表單中控件的事件注册
+					 */
+					function evenRegister() {
+						var registerSendBtn = document.getElementById("register-send-btn-id");
+						var usernameInput = document.getElementById("register-username-input-id");
+						registerSendBtn.addEventListener('tap', function() {
+							if (!toastNetworkInfo("网络异常，请检查")) {
+								return;
+							}
+							var username = usernameInput.value;
+							sendCode(username, registerSendBtn, function(data) {
+								mui.openWindow({
+									id: "verifyCode-win",
+									url: "verifyCode.html",
+									waiting: {
+										autoShow: false
+									},
+									extras: {
+										title:window.title,
+										chapterId:window.chapterId,
+										sectionId: window.sectionId,
+										isFromLoginPage: true,
+										serviceObj: window.serviceObj,
+										gotoUrl: window.gotoUrl,
+										isRegister: true,
+										phone: username,
+										code: data
+									}
+								});
+							});
+						});
+					};
+				</script>
+			</div>
+
+			<div id="context-retrieve-id" class="mui-control-content">
+				<form class="mui-input-group" style="margin-top: 80px;">
+					<div class="mui-input-row">
+						<label>手机号</label>
+						<input id="retrieve-username-input-id" type="text" placeholder="请输入手机号码">
+					</div>
+					<div class="mui-button-row" style="margin-top: 10px;margin-bottom: 10px;">
+						<button id="retrieve-send-btn-id" class="mui-btn mui-btn-primary" style="width: 80%;" onclick="return false;">发送验证码</button>
+					</div>
+				</form>
+				<script type="text/javascript">
+					/**
+					 * 找回密码表單中控件的事件注册
+					 */
+					function evenRetrieve() {
+						var retrieveBtn = document.getElementById("retrieve-send-btn-id");
+						var usernameInput = document.getElementById("retrieve-username-input-id");
+						retrieveBtn.addEventListener('tap', function() {
+							if (!toastNetworkInfo("网络异常，请检查")) {
+								return;
+							}
+							var username = usernameInput.value;
+							sendCode(username, retrieveBtn, function(data) {
+//								console.log(data);
+								mui.openWindow({
+									id: "verifyCode-win",
+									url: "verifyCode.html",
+									waiting: {
+										autoShow: false
+									},
+									extras: {
+										title:window.title,
+										chapterId:window.chapterId,
+										sectionId: window.sectionId,
+										isFromLoginPage: true,
+										serviceObj: window.serviceObj,
+										gotoUrl: window.gotoUrl,
+										isRegister: false,
+										phone: username,
+										code: data
+									}
+								});
+							});
+						});
+					};
+				</script>
+			</div>
+
+		</div>
+
+		<script type="text/javascript">
+			/**
+			 * 更新标题
+			 * @param {Object} text
+			 */
+			function updateTitle(text) {
+					document.getElementById("title-id").innerText = text;
+				}
+				/**
+				 * 显示div：注册、登录、找回密码
+				 * @param {Object} contextId
+				 */
+
+			function showContextDiv(contextId) {
+					var allDiv = document.getElementsByClassName('mui-control-content');
+					for (var i = 0; i < allDiv.length; i++) {
+						var contextDiv = allDiv[i];
+						contextDiv.classList.remove('mui-active');
+					}
+					document.getElementById(contextId).classList.add('mui-active');
+				}
+				/**
+				 * 点击忘记密码
+				 */
+
+			function eventRetrievePwdBtn() {
+					document.getElementById("retrieve-password-id")
+						.addEventListener("tap", function(evt) {
+							updateTitle('忘记密码');
+							mui.back = function() {
+								showContextDiv('context-login-id');
+								mui.back = old_back;
+								evt.target.style.display = 'block';
+								updateTitle('登录');
+							};
+							evt.target.style.display = 'none';
+						});
+				}
+				/**
+				 * 点击注册
+				 */
+
+			function eventRegisterBtn() {
+				document.getElementById("login-register-id")
+					.addEventListener('tap', function(evt) {
+						updateTitle('注册');
+						document.getElementById("retrieve-password-id").style.display = 'none';
+						mui.back = function() {
+							showContextDiv('context-login-id');
+							mui.back = old_back;
+							document.getElementById("retrieve-password-id").style.display = 'block';
+							updateTitle('登录');
+						};
+					});
+			}
+
+			function ajaxErrorHandler(xhr, type, errorThrown) {
+				//异常处理；
+				console.error(type);
+			}
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				window.sectionId = self.sectionId;
+				window.chapterId = self.chapterId;
+				window.gotoUrl = self.gotoUrl;
+				window.serviceObj = self.serviceObj;
+				window.title = self.title;
+				// ------------------------ form表单事件处理
+				eventLogin();
+				evenRegister();
+				evenRetrieve();
+				// ------------------------- 视图跳转事件处理
+				eventRetrievePwdBtn(); //找回密码按钮事件
+				eventRegisterBtn(); // 注册按钮事件
+			});
+			 // H5 plus事件处理
+			function showImm() {
+				var Context = plus.android.importClass("android.content.Context");
+				var InputMethodManager = plus.android.importClass("android.view.inputmethod.InputMethodManager");
+				var main = plus.android.runtimeMainActivity();
+				var imm = main.getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
+			}
+			document.addEventListener("plusready", showImm, false);
+			var old_back = mui.back;
+			mui.back = function() {
+//				console.log(old_back)
+				old_back();
+			};
+			var myreg = /^(13|14|15|18)\d{9}$/;
+		</script>
+	</body>
+
+</html>
