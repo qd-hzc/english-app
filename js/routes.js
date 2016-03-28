@@ -2,9 +2,9 @@
  * 全局路由配置对象
  */
 (function(w) {
-//	var domain = 'http://192.168.1.109:8081/appserver/'; // test
+//	var domain = 'http://192.168.1.145:8080/appserver/'; // test
 //	var domain = 'http://lcsf.ccstudy.cn/'; //production
-var domain = 'http://topenglish.astroway.net/';
+var domain = 'http://www.huijingdz.com:8080/appserver/';
 	w.Routes = {
 		domain: domain,
 		urls: {

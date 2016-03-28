@@ -1,0 +1,150 @@
+{
+  "default.html": {
+    "resources": [
+      "js/mui.min.js",
+      "db/category.js",
+      "css/mui.min.css",
+      "db/others.js",
+      "js/createDb.js"
+    ],
+    "refer": [
+      "image.html",
+      "dragIndex.html"
+    ]
+  },
+  "image.html": {
+    "resources": [
+      "images/English-qishiyendao1.jpg",
+      "images/English-qishiyendao2.jpg",
+      "images/English-qishiyendao3.jpg"
+    ],
+    "refer": [
+      "dragIndex.html"
+    ]
+  },
+  "dragIndex.html": {
+    "resources": [
+      "js/app.js",
+      "images/englishchatu-1.png",
+      "js/service.js",
+      "js/routes.js",
+      "fonts/mui.ttf",
+      "css/iconfont.css",
+      "js/update.js",
+      "fonts/iconfont.ttf",
+      "images/englishchatu-2.png",
+      "images/englishchatu-5.png",
+      "images/englishchatu-6.png",
+      "images/englishchatu-3.png",
+      "images/englishchatu-4.png",
+      "js/mui.min.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "app/section.html",
+      "app/login.html",
+      "app/review-chapter.html",
+      "app/personal.html"
+    ]
+  },
+  "app/question.html": {
+    "resources": [
+      "js/des.js",
+      "fonts/iconfont.ttf"
+    ],
+    "refer": [
+      "app/card.html"
+    ]
+  },
+  "app/section.html": {
+    "refer": [
+      "app/question.html",
+      "app/login.html"
+    ],
+    "resources": [
+      "js/app.js",
+      "js/service.js",
+      "js/routes.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/iconfont.css",
+      "css/mui.min.css"
+    ]
+  },
+  "app/login.html": {
+    "resources": [
+      "js/des.js",
+      "js/app.js",
+      "js/service.js",
+      "js/routes.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "app/section.html",
+      "dragIndex.html"
+    ]
+  },
+  "app/card.html": {
+    "refer": [
+      "app/submit.html"
+    ],
+    "resources": []
+  },
+  "app/submit.html": {
+    "refer": [
+      "app/resolution.html"
+    ],
+    "resources": []
+  },
+  "app/review-chapter.html": {
+    "refer": [
+      "app/review-section.html"
+    ],
+    "resources": [
+      "js/app.js",
+      "js/service.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ]
+  },
+  "app/review-resolution.html": {
+    "resources": [
+      "css/iconfont.css",
+      "js/des.js",
+      "fonts/iconfont.ttf"
+    ],
+    "refer": []
+  },
+  "app/review-section.html": {
+    "refer": [
+      "app/review-resolution.html"
+    ],
+    "resources": []
+  },
+  "app/personal.html": {
+    "resources": [
+      "js/app.js",
+      "images/person/my-person-xitongshezhi.png",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "images/person/my-person-xiaoxi.png"
+    ],
+    "refer": [
+      "app/seting.html",
+      "app/msg-center.html"
+    ]
+  },
+  "app/msg-center.html": {
+    "resources": [
+      "js/app.js",
+      "js/service.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ]
+  }
+}
