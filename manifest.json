@@ -341,7 +341,8 @@
 				],
 				"refer": [
 					"app/seting.html",
-					"app/msg-center.html"
+					"app/msg-center.html",
+					"dragIndex.html"
 				],
 				"priority": 0
 			},

@@ -4,7 +4,7 @@
 (function(w) {
 //	var domain = 'http://192.168.1.145:8080/appserver/'; // test
 //	var domain = 'http://lcsf.ccstudy.cn/'; //production
-var domain = 'http://www.huijingdz.com:8080/appserver/';
+var domain = 'http://huijingdz.com:8080/appserver/';
 	w.Routes = {
 		domain: domain,
 		urls: {

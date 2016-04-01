@@ -135,7 +135,8 @@
     ],
     "refer": [
       "app/seting.html",
-      "app/msg-center.html"
+      "app/msg-center.html",
+      "dragIndex.html"
     ]
   },
   "app/msg-center.html": {
@@ -145,6 +146,7 @@
       "js/mui.min.js",
       "fonts/mui.ttf",
       "css/mui.min.css"
-    ]
+    ],
+    "refer": []
   }
 }
